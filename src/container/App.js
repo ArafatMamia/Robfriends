@@ -3,28 +3,23 @@ import CardsList from "../components/CardsList";
 import SearchBox from "../components/SearchBox";
 import Scroll from "../components/Scroll";
 import ErrorBoudary from "../components/ErrorBoudary";
-import { Component } from "react";
+import {useEffect, useState } from "react";
 
-class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
-      searchField: "",
-    };
-  }
+function App (){
+  const [robots, setRobots] = useState([])
+  const [searchField, setSearchField] = useState("");
+  
 
-  componentDidMount() {
+  useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
-      .then((users) => this.setState({ robots: users }));
-  }
+      .then((users) => setRobots(users));
+  },[])
 
-  onSearchChange = (e) => {
-    this.setState({ searchField: e.target.value });
+  const onSearchChange = (e) => {
+    setSearchField( e.target.value );
   };
-  render() {
-    const { robots, searchField } = this.state;
+  
     const filterdRobots = robots.filter((robot) => {
       return robot.name.toLowerCase().includes(searchField.toLowerCase());
     });
@@ -33,7 +28,7 @@ class App extends Component {
     ) : (
       <div className="tc">
         <h1 className="f1">RoboFriends</h1>
-        <SearchBox searchchange={this.onSearchChange} />
+        <SearchBox searchchange={onSearchChange} />
         <Scroll>
           <ErrorBoudary>
             <CardsList robots={filterdRobots} />
@@ -41,7 +36,7 @@ class App extends Component {
         </Scroll>
       </div>
     );
-  }
+  
 }
 export default App;
 /*  one way data flow
